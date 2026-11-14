@@ -4542,10 +4542,12 @@ BiocinaFlip.tex = {
 	["91945477891076"]  = "Grid4x4", -- Layered Dark Slash
 	["116842793970817"] = "Grid4x4", -- Layered Dark Slash
 	["129622989588953"] = "Grid4x4", -- Layered Dark Slash (Top)
-	["13350500478"]     = "Grid4x4",
-	["16172858603"]     = "Grid4x4", -- smoke
-	["17085222506"]     = "Grid4x4", -- swirl crescent
+	["13350500478"]     = "None",
+	["16172858603"]     = "None", -- smoke
+	["17085222506"]     = "None", -- swirl crescent
 	["93720487300608"]  = "Grid4x4",
+	["78267222277920"]  = "None", -- Trail
+	["17062451848"]     = "None", -- sparks
 }
 -- Live test overrides applied to every "Layered Dark Slash" emitter, e.g.
 -- BiocinaFlip.override.Orientation = Enum.ParticleOrientation.FacingCamera
@@ -4711,7 +4713,7 @@ EFFECTS["Combo3"] = {
 		pe("Sparks", SPARKS { dir = "Right", size = { { 0, 2.952 }, { 1, 0 } }, speed = 84.143, spread = { 5, 100 }, emit = 3 }),
 		pe("Layered Dark Slash", SLASH { bright = 2, dir = "Top", life = 0.45, rot = 90, tex = "129622989588953",
 			col = { { 0, 194, 139, 50 }, { 0.566, 159, 63, 75 }, { 1, 158, 60, 76 } } }),
-		pe("ParticleEmitter", { bright = 1, col = { { 0, 140, 51, 61 }, { 1, 85, 31, 38 } }, dir = "Top", flip = "Grid8x8", fps = 1,
+		pe("ParticleEmitter", { bright = 1, col = { { 0, 140, 51, 61 }, { 1, 85, 31, 38 } }, dir = "Top", fps = 1,
 			life = 0.3, lightEm = 0.35, lightInf = 1, rot = 230, size = 8.418, speed = 0.012, tex = "13350500478" }),
 		pe("cresents", { bright = 0.1, drag = 3, dir = "Bottom", life = { 0.6, 1.2 }, lightInf = 1, locked = false, rate = 10,
 			rotSpeed = { -50, 50 }, rot = { -360, 360 }, speed = 0.008, spread = { 5, 5 }, tex = "17085222506",
@@ -4777,7 +4779,7 @@ EFFECTS["Combo3-2"] = {
 				col = { { 0, 255, 222, 155 }, { 0.486, 239, 128, 113 }, { 1, 114, 21, 37 } } }),
 			pe("Layered Dark Slash", SLASH { bright = 2, dir = "Top", life = 0.45, rot = 180, size = 6.273, sq = 0.8, tex = "129622989588953",
 				col = { { 0, 194, 139, 50 }, { 0.566, 159, 63, 75 }, { 1, 158, 60, 76 } } }),
-			pe("ParticleEmitter", { bright = 1, col = { { 0, 140, 51, 61 }, { 1, 85, 31, 38 } }, dir = "Top", flip = "Grid8x8", fps = 1,
+			pe("ParticleEmitter", { bright = 1, col = { { 0, 140, 51, 61 }, { 1, 85, 31, 38 } }, dir = "Top", fps = 1,
 				life = 0.3, lightEm = 0.35, lightInf = 1, size = 5.962, speed = 0.009, sq = 0.8, tex = "13350500478" }),
 			light { bright = 3, range = 7.5 },
 		}),
