@@ -4536,16 +4536,19 @@ local function light(o) return { k = "light", o = o } end
 local FLIPENV = getgenv and getgenv() or _G
 local BiocinaFlip = {} -- rebuilt on every run so edits to the values below always apply
 FLIPENV.BiocinaFlip = BiocinaFlip
-BiocinaFlip.default = "None"
+BiocinaFlip.default = "Grid4x4"
 BiocinaFlip.tremor = "Grid4x4" -- texture 14762708319 (Tremor Burst)
+-- Optional: use a full-resolution local copy of a sprite sheet instead of the uploaded asset. Put the PNG in your
+-- executor workspace folder and map the texture id to its file name, e.g. localTex["91945477891076"] = "slash1.png"
+BiocinaFlip.localTex = {}
 BiocinaFlip.tex = {
-	["91945477891076"]  = "None", -- Layered Dark Slash
-	["116842793970817"] = "None", -- Layered Dark Slash
-	["129622989588953"] = "None", -- Layered Dark Slash (Top)
-	["13350500478"]     = "None",
-	["16172858603"]     = "None", -- smoke
-	["17085222506"]     = "None", -- swirl crescent
-	["93720487300608"]  = "None",
+	["91945477891076"]  = "Grid4x4", -- Layered Dark Slash
+	["116842793970817"] = "Grid4x4", -- Layered Dark Slash
+	["129622989588953"] = "Grid4x4", -- Layered Dark Slash (Top)
+	["13350500478"]     = "Grid4x4",
+	["16172858603"]     = "Grid4x4", -- smoke
+	["17085222506"]     = "Grid4x4", -- swirl crescent
+	["93720487300608"]  = "Grid4x4",
 }
 -- Live test overrides applied to every "Layered Dark Slash" emitter, e.g.
 -- BiocinaFlip.override.Orientation = Enum.ParticleOrientation.FacingCamera
@@ -4633,6 +4636,11 @@ local function build(n, parent)
 		p.SpreadAngle = Vector2.new(sp[1], sp[2])
 		p.Squash = NS(o.sq or 0)
 		p.Texture = "rbxassetid://" .. o.tex
+		local lf = BiocinaFlip.localTex[tostring(o.tex)]
+		if lf then
+			local okT, idT = pcall(getcustomasset, lf)
+			if okT and idT then p.Texture = idT else warn("Biocina: couldn't load " .. lf) end
+		end
 		p.Transparency = NS(o.tr or 0)
 		p.ZOffset = o.zoff or 0
 		if n.name == "Layered Dark Slash" then
@@ -4711,7 +4719,7 @@ EFFECTS["Combo3"] = {
 		pe("Sparks", SPARKS { dir = "Right", size = { { 0, 2.952 }, { 1, 0 } }, speed = 84.143, spread = { 5, 100 }, emit = 3 }),
 		pe("Layered Dark Slash", SLASH { bright = 2, dir = "Top", life = 0.45, rot = 90, tex = "129622989588953",
 			col = { { 0, 194, 139, 50 }, { 0.566, 159, 63, 75 }, { 1, 158, 60, 76 } } }),
-		pe("ParticleEmitter", { bright = 1, col = { { 0, 140, 51, 61 }, { 1, 85, 31, 38 } }, dir = "Top", fps = 1,
+		pe("ParticleEmitter", { bright = 1, col = { { 0, 140, 51, 61 }, { 1, 85, 31, 38 } }, dir = "Top", flip = "Grid8x8", fps = 1,
 			life = 0.3, lightEm = 0.35, lightInf = 1, rot = 230, size = 8.418, speed = 0.012, tex = "13350500478" }),
 		pe("cresents", { bright = 0.1, drag = 3, dir = "Bottom", life = { 0.6, 1.2 }, lightInf = 1, locked = false, rate = 10,
 			rotSpeed = { -50, 50 }, rot = { -360, 360 }, speed = 0.008, spread = { 5, 5 }, tex = "17085222506",
@@ -4777,7 +4785,7 @@ EFFECTS["Combo3-2"] = {
 				col = { { 0, 255, 222, 155 }, { 0.486, 239, 128, 113 }, { 1, 114, 21, 37 } } }),
 			pe("Layered Dark Slash", SLASH { bright = 2, dir = "Top", life = 0.45, rot = 180, size = 6.273, sq = 0.8, tex = "129622989588953",
 				col = { { 0, 194, 139, 50 }, { 0.566, 159, 63, 75 }, { 1, 158, 60, 76 } } }),
-			pe("ParticleEmitter", { bright = 1, col = { { 0, 140, 51, 61 }, { 1, 85, 31, 38 } }, dir = "Top", fps = 1,
+			pe("ParticleEmitter", { bright = 1, col = { { 0, 140, 51, 61 }, { 1, 85, 31, 38 } }, dir = "Top", flip = "Grid8x8", fps = 1,
 				life = 0.3, lightEm = 0.35, lightInf = 1, size = 5.962, speed = 0.009, sq = 0.8, tex = "13350500478" }),
 			light { bright = 3, range = 7.5 },
 		}),
