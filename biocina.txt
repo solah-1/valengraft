@@ -5328,6 +5328,11 @@ local CYCLE_TIMEOUT     = 3          -- seconds without an M1 swing before the c
 local SLASH_RANGE       = 12         -- studs around you counted as "touched by the slash"
 local RETRIGGER_COOLDOWN = 0.3       -- same animation can't count twice within this (client + server track copies)
 local EFFECT_DURATION   = 1.5        -- from the capture (EffectDuration)
+local BURST_TEXTURE     = "rbxassetid://14762708319" -- 4x4 sprite sheet of the burst
+local MAX_SIZE          = 10         -- studs the burst grows to (the capture used 10); lower = sharper, since the sprite is stretched less
+local SHARP_DISTANCE    = 16         -- the burst is full size when the camera is at least this far (studs) from the target and shrinks as it gets
+                                     -- closer, so the low-resolution sprite isn't blown up into visible pixels; 0 = off
+local BURST_MIN_SCALE   = 0.4        -- smallest it shrinks to (fraction of the normal size)
 local SOUND_FILE        = "burst.ogg"
 local SOUND_VOLUME      = 2
 
@@ -5370,6 +5375,12 @@ local function NS2(a, b)
 	return NumberSequence.new({ NumberSequenceKeypoint.new(0, a), NumberSequenceKeypoint.new(1, b) })
 end
 
+-- load the sprite sheet up front: a texture that is used for the first time shows its low-resolution preview
+-- (blocky) while it streams in, so the first bursts would look pixelated
+task.spawn(function()
+	pcall(function() game:GetService("ContentProvider"):PreloadAsync({ BURST_TEXTURE }) end)
+end)
+
 local EMITTERS = {
 	{ life = 0.2, size0 = 4 },
 	{ life = 0.1, size0 = 0 },
@@ -5379,6 +5390,13 @@ local EMITTERS = {
 local function playTremor(victim)
 	local hrp = victim and victim:FindFirstChild("HumanoidRootPart")
 	if not hrp then return end
+
+	-- the closer the camera, the more the sprite is magnified on screen (= pixelated): shrink the burst to compensate
+	local scale = 1
+	local cam = workspace.CurrentCamera
+	if cam and SHARP_DISTANCE > 0 then
+		scale = math.clamp((cam.CFrame.Position - hrp.Position).Magnitude / SHARP_DISTANCE, BURST_MIN_SCALE, 1)
+	end
 
 	local a = Instance.new("Attachment")
 	a.Name = "PartHit"
@@ -5405,11 +5423,11 @@ local function playTremor(victim)
 		p.Rate = 20
 		p.RotSpeed = NumberRange.new(0, 0)
 		p.Rotation = NumberRange.new(0, 360)
-		p.Size = NS2(d.size0, 10)
+		p.Size = NS2(d.size0 * scale, MAX_SIZE * scale)
 		p.Speed = NumberRange.new(0.01, 0.01)
 		p.SpreadAngle = Vector2.new(356, 356)
 		p.Squash = NumberSequence.new(0)
-		p.Texture = "rbxassetid://14762708319"
+		p.Texture = BURST_TEXTURE
 		p.TimeScale = 0.5
 		p.Transparency = NumberSequence.new(0)
 		p.ZOffset = 2
