@@ -4536,18 +4536,16 @@ local function light(o) return { k = "light", o = o } end
 local FLIPENV = getgenv and getgenv() or _G
 local BiocinaFlip = {} -- rebuilt on every run so edits to the values below always apply
 FLIPENV.BiocinaFlip = BiocinaFlip
-BiocinaFlip.default = "Grid4x4"
+BiocinaFlip.default = "None"
 BiocinaFlip.tremor = "Grid4x4" -- texture 14762708319 (Tremor Burst)
 BiocinaFlip.tex = {
-	["91945477891076"]  = "Grid4x4", -- Layered Dark Slash
-	["116842793970817"] = "Grid4x4", -- Layered Dark Slash
-	["129622989588953"] = "Grid4x4", -- Layered Dark Slash (Top)
+	["91945477891076"]  = "None", -- Layered Dark Slash
+	["116842793970817"] = "None", -- Layered Dark Slash
+	["129622989588953"] = "None", -- Layered Dark Slash (Top)
 	["13350500478"]     = "None",
 	["16172858603"]     = "None", -- smoke
 	["17085222506"]     = "None", -- swirl crescent
-	["93720487300608"]  = "Grid4x4",
-	["78267222277920"]  = "None", -- Trail
-	["17062451848"]     = "None", -- sparks
+	["93720487300608"]  = "None",
 }
 -- Live test overrides applied to every "Layered Dark Slash" emitter, e.g.
 -- BiocinaFlip.override.Orientation = Enum.ParticleOrientation.FacingCamera
