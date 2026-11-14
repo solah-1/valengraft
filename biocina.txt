@@ -4557,6 +4557,39 @@ function BiocinaFlip.resolve(name)
 	return Enum.ParticleFlipbookLayout.Grid4x4
 end
 
+-- Preview: BiocinaFlip.preview("91945477891076") plays that texture once per layout on your character,
+-- one every 1.5s, printing the layout name each time. Note which one shows a whole, sharp slash, then
+-- put it in the table above. (Optional 2nd arg: size in studs, default 8.857.)
+function BiocinaFlip.preview(tex, size)
+	local char = game:GetService("Players").LocalPlayer.Character
+	local hrp = char and char:FindFirstChild("HumanoidRootPart")
+	if not hrp then warn("Biocina preview: no HumanoidRootPart") return end
+	task.spawn(function()
+		for _, name in ipairs({ "None", "Grid2x2", "Grid4x4", "Grid8x8" }) do
+			local a = Instance.new("Attachment")
+			a.Position = Vector3.new(0, 0, -6)
+			a.Parent = hrp
+			local p = Instance.new("ParticleEmitter")
+			p.Enabled = false
+			p.Texture = "rbxassetid://" .. tostring(tex)
+			p.FlipbookLayout = Enum.ParticleFlipbookLayout[name]
+			p.FlipbookMode = Enum.ParticleFlipbookMode.OneShot
+			p.Lifetime = NumberRange.new(1)
+			p.Speed = NumberRange.new(0)
+			p.Size = NumberSequence.new(size or 8.857)
+			p.Orientation = Enum.ParticleOrientation.FacingCamera
+			p.LockedToPart = true
+			p.LightEmission = 0.25
+			p.Brightness = 2
+			p.Parent = a
+			print("Biocina preview " .. tostring(tex) .. " -> " .. name)
+			p:Emit(1)
+			game:GetService("Debris"):AddItem(a, 2)
+			task.wait(1.5)
+		end
+	end)
+end
+
 local function build(n, parent)
 	if n.k == "att" then
 		local a = Instance.new("Attachment")
