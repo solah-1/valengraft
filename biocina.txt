@@ -4528,6 +4528,35 @@ local function att(name, pos, kids, rot) return { k = "att", name = name, pos = 
 local function pe(name, o) return { k = "pe", name = name, o = o } end
 local function light(o) return { k = "light", o = o } end
 
+-- ===== flipbook layout per texture =====
+-- Every flipbook particle must use the layout that matches its sprite sheet. A wrong layout shows one small
+-- cell of the sheet stretched over the whole particle, which looks pixelated. Valid values:
+-- "None", "Grid2x2", "Grid4x4", "Grid8x8". An emitter's own `flip = ...` still wins over this table.
+-- Change a value here (or live: BiocinaFlip.set("91945477891076", "Grid8x8")) until a single frame looks whole.
+local FLIPENV = getgenv and getgenv() or _G
+local BiocinaFlip = {} -- rebuilt on every run so edits to the values below always apply
+FLIPENV.BiocinaFlip = BiocinaFlip
+BiocinaFlip.default = "Grid4x4"
+BiocinaFlip.tremor = "Grid4x4" -- texture 14762708319 (Tremor Burst)
+BiocinaFlip.tex = {
+	["91945477891076"]  = "Grid4x4", -- Layered Dark Slash
+	["116842793970817"] = "Grid4x4", -- Layered Dark Slash
+	["129622989588953"] = "Grid4x4", -- Layered Dark Slash (Top)
+	["13350500478"]     = "Grid4x4",
+	["16172858603"]     = "Grid4x4", -- smoke
+	["17085222506"]     = "Grid4x4", -- swirl crescent
+	["93720487300608"]  = "Grid4x4",
+}
+function BiocinaFlip.set(tex, layout)
+	if tex == "tremor" then BiocinaFlip.tremor = layout else BiocinaFlip.tex[tostring(tex)] = layout end
+end
+function BiocinaFlip.resolve(name)
+	local ok, layout = pcall(function() return Enum.ParticleFlipbookLayout[name] end)
+	if ok and layout then return layout end
+	warn("Biocina: bad flipbook layout '" .. tostring(name) .. "', using Grid4x4")
+	return Enum.ParticleFlipbookLayout.Grid4x4
+end
+
 local function build(n, parent)
 	if n.k == "att" then
 		local a = Instance.new("Attachment")
@@ -4547,7 +4576,7 @@ local function build(n, parent)
 		p.Color = CS(o.col)
 		p.Drag = o.drag or 0
 		p.EmissionDirection = Enum.NormalId[o.dir or "Front"]
-		p.FlipbookLayout = Enum.ParticleFlipbookLayout[o.flip or "Grid4x4"]
+		p.FlipbookLayout = BiocinaFlip.resolve(o.flip or BiocinaFlip.tex[tostring(o.tex)] or BiocinaFlip.default)
 		p.FlipbookMode = Enum.ParticleFlipbookMode[o.flipMode or "OneShot"]
 		p.FlipbookFramerate = NR(o.fps or 1)
 		p.FlipbookStartRandom = o.flipRand or false
@@ -5393,7 +5422,8 @@ local function playTremor(victim)
 		p.Color = ColorSequence.new(Color3.fromRGB(255, 175, 0))
 		p.Drag = 15
 		p.EmissionDirection = Enum.NormalId.Back
-		p.FlipbookLayout = Enum.ParticleFlipbookLayout.Grid4x4
+		local bf = (getgenv and getgenv() or _G).BiocinaFlip
+		p.FlipbookLayout = bf and bf.resolve(bf.tremor) or Enum.ParticleFlipbookLayout.Grid4x4
 		p.FlipbookMode = Enum.ParticleFlipbookMode.OneShot
 		p.FlipbookFramerate = NumberRange.new(1, 1)
 		p.FlipbookStartRandom = false
