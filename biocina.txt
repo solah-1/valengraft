@@ -4547,6 +4547,12 @@ BiocinaFlip.tex = {
 	["17085222506"]     = "Grid4x4", -- swirl crescent
 	["93720487300608"]  = "Grid4x4",
 }
+-- Live test overrides applied to every "Layered Dark Slash" emitter, e.g.
+-- BiocinaFlip.override.Orientation = Enum.ParticleOrientation.FacingCamera
+-- BiocinaFlip.override.Lifetime = NumberRange.new(0.6)
+-- BiocinaFlip.override.LightEmission = 0   -- clear one with = nil
+BiocinaFlip.override = {}
+
 function BiocinaFlip.set(tex, layout)
 	if tex == "tremor" then BiocinaFlip.tremor = layout else BiocinaFlip.tex[tostring(tex)] = layout end
 end
@@ -4629,6 +4635,9 @@ local function build(n, parent)
 		p.Texture = "rbxassetid://" .. o.tex
 		p.Transparency = NS(o.tr or 0)
 		p.ZOffset = o.zoff or 0
+		if n.name == "Layered Dark Slash" then
+			for prop, val in pairs(BiocinaFlip.override) do p[prop] = val end
+		end
 		p:SetAttribute("EmitCount", o.emit or 1)
 		if o.delay then p:SetAttribute("EmitDelay", o.delay) end
 		p.Parent = parent
